@@ -29,6 +29,10 @@ Report.init({
         defaultValue: DataTypes.NOW
 
     },
+    report_detalle:{
+        Type:DataTypes.STRING,
+        allowNull:false
+    }
 
 },{
     sequelize,
