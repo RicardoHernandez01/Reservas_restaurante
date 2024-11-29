@@ -45,7 +45,7 @@ Table.init({
         allowNull: true
     },
     table_disponibilidad:{
-        type: DataTypes.DATE,            // Puede almacenar un arreglo de horarios disponibles
+        type: DataTypes.STRING,            // Puede almacenar un arreglo de horarios disponibles
         allowNull: false
     }
 

@@ -20,7 +20,7 @@ router.get('/tables',async(req,res)=>{
     res.status(200).json({
         ok:true,
         status:200,
-        body: tables
+        body: tables || []
     });
 });
 
@@ -60,7 +60,7 @@ router.post('/tables',[
     body('table_tipo').optional().isString().withMessage('table_tipo debe ser una cadena de texto'),
     body('table_estado').optional().isString().withMessage('table_estado debe ser una cadena de texto'),
     body('table_descripcion').optional().isString().withMessage('table_descripcion debe ser una cadena de texto'),
-    body('table_disponibilidad').isISO8601().withMessage('table_disponibilidad debe ser una fecha en formato ISO8601 (YYYY-MM-DD)'),
+    body('table_disponibilidad').isString().withMessage('table_disponibilidad debe ser una fecha en formato ISO8601 (YYYY-MM-DD)'),
     handleValidationErrors
 ],async(req,res)=>{
     // res.send('crear nueva tabla');
@@ -106,7 +106,7 @@ router.put('/tables/:table_id',[
     body('table_tipo').optional().isString().withMessage('table_tipo debe ser una cadena de texto'),
     body('table_estado').optional().isString().withMessage('table_estado debe ser una cadena de texto'),
     body('table_descripcion').optional().isString().withMessage('table_descripcion debe ser una cadena de texto'),
-    body('table_disponibilidad').optional().isISO8601().withMessage('table_disponibilidad debe ser una fecha en formato ISO8601 (YYYY-MM-DD)'),
+    body('table_disponibilidad').optional().isString().withMessage('table_disponibilidad debe ser una fecha en formato ISO8601 (YYYY-MM-DD)'),
     handleValidationErrors
 ],async (req,res)=>{
     // res.send('modificar una mesa específica');
