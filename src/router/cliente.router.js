@@ -2,7 +2,7 @@
 const router = require('express').Router();
 const {body, param, validationResult} = require('express-validator');
 const { Op } = require('sequelize');
-const bcrypt = require("bcrypt");
+//const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 

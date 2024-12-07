@@ -40,30 +40,17 @@ router.get('/tables/:table_id',async (req,res)=>{
 });
 
 //listar mesas disponibles por fecha y hora
-
 router.post('/tables',[
-    body('table_numero')
-    .isInt({ min: 1 }).withMessage('table_numero debe ser un número entero positivo')
-    .custom(async (value) => {
-        const existingTable = await Tables.findOne({
-            where: {
-                table_numero: value
-            }
-        });
-        if (existingTable) {
-            throw new Error('table_numero ya está registrado, elige otro número.');
-        }
-        return true;
-    }),
+    
     body('table_capacidad').isInt({ min: 1 }).withMessage('table_capacidad debe ser un número entero positivo'),
     body('table_ubicacion').isString().notEmpty().withMessage('table_ubicacion es obligatorio y debe ser una cadena de texto'),
     body('table_tipo').optional().isString().withMessage('table_tipo debe ser una cadena de texto'),
     body('table_estado').optional().isString().withMessage('table_estado debe ser una cadena de texto'),
     body('table_descripcion').optional().isString().withMessage('table_descripcion debe ser una cadena de texto'),
-    body('table_disponibilidad').isString().withMessage('table_disponibilidad debe ser una fecha en formato ISO8601 (YYYY-MM-DD)'),
+    body('table_disponibilidad').isString().withMessage('table_disponibilidad debe ser string)'),
     handleValidationErrors
 ],async(req,res)=>{
-    // res.send('crear nueva tabla');
+    //res.send('crear nueva tabla');
     const dataTables = req.body;
     await Tables.sync();
     const createTable = await Tables.create({
@@ -81,7 +68,7 @@ router.post('/tables',[
         status: 201,
         message: 'Created table'
     });
-})
+});
 
 router.put('/tables/:table_id',[
     param('table_id').isInt().withMessage('table_id debe ser un número entero'),
