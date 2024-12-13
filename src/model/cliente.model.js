@@ -22,8 +22,10 @@ Cliente.init({
     cliente_email:{
         type:DataTypes.STRING,
         allowNull:false,
+        unique:true,
         validate: {
             isEmail: true
+        
         }
     },
     cliente_password:{
@@ -36,6 +38,10 @@ Cliente.init({
         validate:{
             len:[10,15]
         }
+    },
+    cliente_rol:{
+        type:DataTypes.STRING,
+        allowNull:false,
     },
     cliente_notas:{
         type:DataTypes.STRING,

@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const {body, param, validationResult} = require('express-validator');
 const { Op } = require('sequelize');
-
+const upload = require('../utils/upload')
 const Tables = require('../model/table.model')
 
 
@@ -49,25 +49,33 @@ router.post('/tables',[
     body('table_descripcion').optional().isString().withMessage('table_descripcion debe ser una cadena de texto'),
     body('table_disponibilidad').isString().withMessage('table_disponibilidad debe ser string)'),
     handleValidationErrors
-],async(req,res)=>{
-    //res.send('crear nueva tabla');
-    const dataTables = req.body;
-    await Tables.sync();
-    const createTable = await Tables.create({
-        table_numero: dataTables.table_numero,
-        table_capacidad: dataTables.table_capacidad,
-        table_ubicacion: dataTables.table_ubicacion,
-        table_tipo: dataTables.table_tipo,
-        table_estado: dataTables.table_estado,
-        table_descripcion: dataTables.table_descripcion,
-        table_disponibilidad: dataTables.table_disponibilidad
-
-    });
-    res.status(201).json({
-        ok: true,
-        status: 201,
-        message: 'Created table'
-    });
+], upload.single('table_img'),async(req,res)=>{
+   try {
+     //res.send('crear nueva tabla');
+     const dataTables = req.body;
+     const imagePath = req.file ? '/src/uploads/$(req.file.filename' : null;
+     await Tables.sync();
+     
+     const createTable = await Tables.create({
+         table_numero: dataTables.table_numero,
+         table_capacidad: dataTables.table_capacidad,
+         table_ubicacion: dataTables.table_ubicacion,
+         table_tipo: dataTables.table_tipo,
+         table_estado: dataTables.table_estado,
+         table_descripcion: dataTables.table_descripcion,
+         table_disponibilidad: dataTables.table_disponibilidad,
+         table_image: imagePath,
+     });
+     res.status(201).json({
+         ok: true,
+         status: 201,
+         message: 'Created table'
+     });
+    
+   } catch (error) {
+    console.error("Error al ingresar una mesa:", error);
+    res.status(500).json({ ok: false, error: "Error al ingresar una mesa" });
+   }
 });
 
 router.put('/tables/:table_id',[
@@ -96,26 +104,33 @@ router.put('/tables/:table_id',[
     body('table_disponibilidad').optional().isString().withMessage('table_disponibilidad debe ser una fecha en formato ISO8601 (YYYY-MM-DD)'),
     handleValidationErrors
 ],async (req,res)=>{
-    // res.send('modificar una mesa específica');
-    const id = req.params.table_id;
-    const dataTables = req.body;
-    const updateTable = await Tables.update({
-        table_numero: dataTables.table_numero,
-        table_capacidad: dataTables.table_capacidad,
-        table_ubicacion: dataTables.table_ubicacion,
-        table_tipo: dataTables.table_tipo,
-        table_estado: dataTables.table_estado,
-        table_descripcion: dataTables.table_descripcion,
-        table_disponibilidad: dataTables.table_disponibilidad
-
-    },{
-        where: {table_id: id}
-    });
-    res.status(200).json({
-        ok:true,
-        status:200,
-        body: updateTable
-    });
+   try {
+     // res.send('modificar una mesa específica');
+     const id = req.params.table_id;
+     const dataTables = req.body;
+ 
+     const imagePath = req.file ? '/src/uploads/$(req.file.filename' : null;
+     const updateTable = await Tables.update({
+         table_numero: dataTables.table_numero,
+         table_capacidad: dataTables.table_capacidad,
+         table_ubicacion: dataTables.table_ubicacion,
+         table_tipo: dataTables.table_tipo,
+         table_estado: dataTables.table_estado,
+         table_descripcion: dataTables.table_descripcion,
+         table_disponibilidad: dataTables.table_disponibilidad,
+         ...Op(imagePath && {table_image: imagePath})
+     },{
+         where: {table_id: id}
+     });
+     res.status(200).json({
+         ok:true,
+         status:200,
+         body: updateTable
+     });
+   } catch (error) {
+    console.error("Error al actualizar la mesa:", error);
+    res.status(500).json({ ok: false, error: "Error al actualizar la mesa" });
+   }
 });
 
 router.delete('/tables/:table_id',async (req,res)=>{

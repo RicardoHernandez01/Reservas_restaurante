@@ -1,4 +1,4 @@
-const {Sequelize, Model, DataTypes} = require('sequelize');
+const {Sequelize, Model, DataTypes, STRING} = require('sequelize');
 const{ toDefaultValue } = require('sequelize/lib/utils');
 
 const sequelize  = new Sequelize("reservas_restaurante", "root", "hernandez1",{
@@ -47,6 +47,10 @@ Table.init({
     table_disponibilidad:{
         type: DataTypes.STRING,            // Puede almacenar un arreglo de horarios disponibles
         allowNull: false
+    },
+    table_img:{
+        type: DataTypes.STRING,
+        allowNull:true
     }
 
 },

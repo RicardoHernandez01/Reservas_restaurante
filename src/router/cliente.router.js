@@ -120,6 +120,7 @@ router.post('/clientes', [
     body('cliente_email').isEmail().withMessage('Debe proporcionar un correo electrónico válido.'),
     body('cliente_password').isLength({ min: 6 }).withMessage('La contraseña debe tener al menos 6 caracteres.'),
     body('cliente_telefono').isMobilePhone().withMessage('Debe proporcionar un número de teléfono válido.'),
+    body('cliente_rol').isString().withMessage("Debe ser una cadena de texto"),
     body('cliente_notas').optional().isString().withMessage('Las notas deben ser una cadena de texto.'),
     handleValidationErrors
 ], async (req,res)=>{
@@ -130,6 +131,7 @@ router.post('/clientes', [
         cliente_email: dataCliente.cliente_email,
         cliente_password: dataCliente.cliente_password,
         cliente_telefono: dataCliente.cliente_telefono,
+        cliente_rol: dataCliente.cliente_rol,
         cliente_notas: dataCliente.cliente_notas,
         cliente_fecha_registro: dataCliente.cliente_fecha_registro
     });
@@ -148,6 +150,7 @@ router.put('/clientes/:cliente_id',[
     body('cliente_email').optional().isEmail().withMessage('Debe proporcionar un correo electrónico válido.'),
     body('cliente_password').optional().isLength({ min: 6 }).withMessage('La contraseña debe tener al menos 6 caracteres.'),
     body('cliente_telefono').optional().isMobilePhone().withMessage('Debe proporcionar un número de teléfono válido.'),
+    body('cliente_rol').isString().withMessage("Debe ser una cadena de texto"),
     body('cliente_notas').optional().isString().withMessage('Las notas deben ser una cadena de texto.'),
     handleValidationErrors
 ],
@@ -159,6 +162,7 @@ async (req, res)=>{
         cliente_email: dataCliente.cliente_email,
         cliente_password: dataCliente.cliente_password,
         cliente_telefono: dataCliente.cliente_telefono,
+        cliente_rol: dataCliente.cliente_rol,
         cliente_notas: dataCliente.cliente_notas,
     },{
         where: {
