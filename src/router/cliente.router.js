@@ -20,77 +20,76 @@ function handleValidationErrors(req, res, next) {
     }
     next();
 }
-
 // Endpoint de inicio de sesión con JWT
 router.post(
-    "/login",
-    [
+  "/login",
+  [
       body("cliente_email").isEmail().withMessage("El email debe ser válido."),
       body("cliente_password")
-        .notEmpty()
-        .withMessage("La contraseña es obligatoria."),
-    ],
-    handleValidationErrors,
-    async (req, res) => {
+          .notEmpty()
+          .withMessage("La contraseña es obligatoria."),
+      body("cliente_rol")
+          .notEmpty()
+          .withMessage("El rol del cliente es obligatorio."),
+  ],
+  handleValidationErrors,
+  async (req, res) => {
       try {
-        const { cliente_email, cliente_password } = req.body;
-  
-        // Buscar el cliente por email
-        const cliente = await Clientes.findOne({
-          where: { cliente_email },
-        });
-  
-        if (!cliente) {
-          return res.status(404).json({
-            ok: false,
-            message: "El email no está registrado.",
+          const { cliente_email, cliente_password, cliente_rol } = req.body;
+
+          // Buscar el cliente por email, contraseña y rol
+          const cliente = await Clientes.findOne({
+              where: {
+                  cliente_email,
+                  cliente_password,
+                  cliente_rol
+              },
           });
-        }
-  
-        // Comparar la contraseña (sin cifrado)
-        if (cliente.cliente_password !== cliente_password) {
-          return res.status(401).json({
-            ok: false,
-            message: "Contraseña incorrecta.",
-          });
-        }
-  
-        // Generar el token JWT
-        const token = jwt.sign(
-          {
-            cliente_id: cliente.cliente_id,
-            cliente_email: cliente.cliente_email,
-            cliente_nombre: cliente.cliente_nombre,
-          },
-          SECRET_KEY, // Clave secreta desde el archivo .env
-          {
-            expiresIn: process.env.JWT_EXPIRES_IN || "1h", // Tiempo de expiración del token
+
+          if (!cliente) {
+              return res.status(404).json({
+                  ok: false,
+                  message: "Credenciales incorrectas o cliente no encontrado.",
+              });
           }
-        );
-  
-        // Inicio de sesión exitoso
-        res.status(200).json({
-          ok: true,
-          message: "Inicio de sesión exitoso.",
-          token,
-          cliente: {
-            cliente_id: cliente.cliente_id,
-            cliente_nombre: cliente.cliente_nombre,
-            cliente_email: cliente.cliente_email,
-            cliente_telefono: cliente.cliente_telefono,
-            cliente_notas: cliente.cliente_notas,
-          },
-        });
+
+          // Generar el token JWT
+          const token = jwt.sign(
+              {
+                  cliente_id: cliente.cliente_id,
+                  cliente_email: cliente.cliente_email,
+                  cliente_nombre: cliente.cliente_nombre,
+                  cliente_rol: cliente.cliente_rol,
+              },
+              SECRET_KEY, // Clave secreta desde el archivo .env
+              {
+                  expiresIn: process.env.JWT_EXPIRES_IN || "1h", // Tiempo de expiración del token
+              }
+          );
+
+          // Inicio de sesión exitoso
+          res.status(200).json({
+              ok: true,
+              message: "Inicio de sesión exitoso.",
+              token,
+              cliente: {
+                  cliente_id: cliente.cliente_id,
+                  cliente_nombre: cliente.cliente_nombre,
+                  cliente_email: cliente.cliente_email,
+                  cliente_telefono: cliente.cliente_telefono,
+                  cliente_rol: cliente.cliente_rol,
+                  cliente_notas: cliente.cliente_notas,
+              },
+          });
       } catch (error) {
-        console.error("Error en el inicio de sesión:", error);
-        res.status(500).json({
-          ok: false,
-          message: "Error en el inicio de sesión.",
-        });
+          console.error("Error en el inicio de sesión:", error);
+          res.status(500).json({
+              ok: false,
+              message: "Error en el inicio de sesión.",
+          });
       }
-    }
-  );
-  
+  }
+);
 
 router.get('/clientes',async (req,res)=>{
     const  clientes = await Clientes.findAll();

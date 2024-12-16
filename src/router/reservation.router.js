@@ -33,6 +33,21 @@ router.get('/reservations/:reservation_id',async(req,res)=>{
     res.status(200).json({
         ok: true,
         status:200,
+        body: reservacion                                                                                                                                                                                                                                                                                                                                                                                        
+    })
+});
+
+//reservacion por cliente
+router.get('/reservations/clientes/:cliente_id',async(req,res)=>{
+    const id = req.params.cliente_id;
+    const reservacion = await Reservations.findOne({                                                                                                                     
+        where: {
+            cliente_id: id
+        }
+    });
+    res.status(200).json({
+        ok: true,
+        status:200,
         body: reservacion
     })
 });

@@ -2,7 +2,7 @@ const {Sequelize, Model, DataTypes} = require('sequelize');
 const{ toDefaultValue } = require('sequelize/lib/utils');
 const bcrypt = require('bcryptjs');
 
-const sequelize  = new Sequelize("reservas_restaurante", "root", "hernandez1",{
+const sequelize  = new Sequelize("api_reservas", "root", "hernandez1",{
     host: "localhost",
     dialect: "mysql",
     port: "3306"

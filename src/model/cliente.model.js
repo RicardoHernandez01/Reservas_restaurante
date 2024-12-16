@@ -1,7 +1,7 @@
 const {Sequelize, Model, DataTypes, INTEGER} = require('sequelize');
 const{ toDefaultValue } = require('sequelize/lib/utils');
 
-const sequelize  = new Sequelize("reservas_restaurante", "root", "hernandez1",{
+const sequelize  = new Sequelize("api_reservas", "root", "hernandez1",{
     host: "localhost",
     dialect: "mysql",
     port: "3306"
@@ -55,7 +55,8 @@ Cliente.init({
 
 },{
     sequelize,
-    modelName: 'Cliente'
+    modelName: 'Cliente',
+
 });
 
 module.exports = Cliente;
