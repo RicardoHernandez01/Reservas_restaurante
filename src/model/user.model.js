@@ -1,13 +1,19 @@
 const {Sequelize, Model, DataTypes} = require('sequelize');
+require('dotenv').config();
+
 const{ toDefaultValue } = require('sequelize/lib/utils');
 const bcrypt = require('bcryptjs');
 
-const sequelize  = new Sequelize("api_reservas", "root", "hernandez1",{
-    host: "localhost",
-    dialect: "mysql",
-    port: "3306"
-});
-
+const sequelize = new Sequelize(
+    process.env.DB_DBNAME, 
+    process.env.DB_USERNAME, 
+    process.env.DB_PASSWORD, 
+    {
+      host: process.env.DB_HOST,
+      port: "3306", // Agrega el puerto
+      dialect: "mysql",
+    }
+  );
 class Usuario extends Model{}
 
 Usuario.init({

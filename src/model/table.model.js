@@ -1,11 +1,18 @@
 const {Sequelize, Model, DataTypes, STRING} = require('sequelize');
+require('dotenv').config();
+
 const{ toDefaultValue } = require('sequelize/lib/utils');
 
-const sequelize  = new Sequelize("api_reservas", "root", "hernandez1",{
-    host: "localhost",
-    dialect: "mysql",
-    port: "3306"
-});
+const sequelize = new Sequelize(
+    process.env.DB_DBNAME, 
+    process.env.DB_USERNAME, 
+    process.env.DB_PASSWORD, 
+    {
+      host: process.env.DB_HOST,
+      port: "3306", // Agrega el puerto
+      dialect: "mysql",
+    }
+  );
 
 //async sirve para crear un tabla en caso que no este creado o hacer una inserción si la tabla ya existe
 
