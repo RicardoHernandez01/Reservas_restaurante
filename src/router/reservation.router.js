@@ -63,64 +63,29 @@ router.post('/reservations', [
     body('reservacion_hora').matches(/^([01]\d|2[0-3]):([0-5]\d)$/).withMessage('Hora de reservación inválida'),
     body('reservacion_num_personas').isInt({ min: 1 }).withMessage('Número de personas debe ser al menos 1'),
     body('reservacion_status').isIn(['Pendiente', 'Confirmado', 'Cancelado']).withMessage('Estado de la reservación inválido')
-], async (req, res) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-        return res.status(400).json({
-            ok: false,
-            status: 400,
-            errors: errors.array(),
-        });
-    }
-
+],
+handleValidationErrors,
+async(req,res)=>{
     const dataReservacion = req.body;
+    await Reservations.sync();
 
-    try {
-        // Verificar si ya existe una reserva para la misma mesa y fecha
-        const existingReservation = await Reservations.findOne({
-            where: {
-                table_id: dataReservacion.table_id,
-                reservacion_fecha: dataReservacion.reservacion_fecha,
-            },
-        });
+    
 
-        if (existingReservation) {
-            return res.status(400).json({
-                ok: false,
-                status: 400,
-                message: 'Ya existe una reserva para esta mesa en la misma fecha.',
-            });
-        }
-
-        // Crear una nueva reservación
-        const createReservacion = await Reservations.create({
-            table_id: dataReservacion.table_id,
-            cliente_id: dataReservacion.cliente_id,
-            reservacion_fecha: dataReservacion.reservacion_fecha,
-            reservacion_hora: dataReservacion.reservacion_hora,
-            reservacion_num_personas: dataReservacion.reservacion_num_personas,
-            reservacion_comentarios: dataReservacion.reservacion_comentarios,
-            reservacion_alergias: dataReservacion.reservacion_alergias,
-            reservacion_status: dataReservacion.reservacion_status,
-        });
-
-        return res.status(201).json({
-            ok: true,
-            status: 201,
-            message: 'Reservación creada exitosamente',
-            data: createReservacion,
-        });
-
-    } catch (error) {
-        console.error('Error al procesar la reservación:', error);
-        return res.status(500).json({
-            ok: false,
-            status: 500,
-            message: 'Error interno del servidor',
-            error: error.message,
-        });
-    }
+    const createReservacion = await Reservations.create({
+        table_id: dataReservacion.table_id,
+        cliente_id:dataReservacion.cliente_id,
+        reservacion_fecha: dataReservacion.reservacion_fecha,
+        reservacion_hora: dataReservacion.reservacion_hora,
+        reservacion_num_personas: dataReservacion.reservacion_num_personas,
+        reservacion_comentarios: dataReservacion.reservacion_comentarios,
+        reservacion_alergias: dataReservacion.reservacion_alergias,
+        reservación_status: dataReservacion.reservacion_status,
+    });
+    res.status(201).json({
+        ok: true,
+        status: 201,
+        message: 'Created table'
+    });
 });
 
 router.put('/reservations/:reservation_id', [
